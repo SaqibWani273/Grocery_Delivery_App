@@ -8,7 +8,7 @@ final textStyle = TextStyle(
   color: AppColors.textPrimaryDark,
   fontWeight: FontWeight.bold,
   height: 1.2,
-  fontSize: 16,
+  fontSize: 15,
   fontFamily: GoogleFonts.aBeeZee().fontFamily,
 );
 

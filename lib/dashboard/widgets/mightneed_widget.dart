@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_delivery_app/app_colors.dart';
+import 'package:grocery_delivery_app/app_sizes.dart';
 import 'package:grocery_delivery_app/dashboard/widgets/product_card.dart';
 import 'package:grocery_delivery_app/ui_extensions.dart';
 
@@ -16,7 +17,7 @@ class YouMightNeedSection extends StatelessWidget {
       children: [
         // Header Row
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+          padding: const EdgeInsets.only(left: AppSizes.dashboardLeftPadding, bottom: 10.0, right: 20.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -50,7 +51,7 @@ class YouMightNeedSection extends StatelessWidget {
           width: context.deviceWidth,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.only(left: 20.0, right: 8.0),
+            padding: const EdgeInsets.only(left: AppSizes.dashboardLeftPadding, right: 8.0),
             itemCount: products.length,
 
             itemBuilder: (context, index) {

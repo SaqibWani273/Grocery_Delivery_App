@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grocery_delivery_app/app_colors.dart';
+import 'package:grocery_delivery_app/app_sizes.dart';
 import 'package:grocery_delivery_app/categories_screen.dart';
 import 'package:grocery_delivery_app/dashboard/dashboard_provider.dart';
 import 'package:grocery_delivery_app/dashboard/dashboard_screen.dart';
@@ -67,9 +68,9 @@ class HomePage extends StatelessWidget {
             child: Container(
               margin: EdgeInsets.symmetric(
                 horizontal: context.deviceWidth * 0.18,
-                vertical: context.deviceHeight * 0.05,
+                vertical: AppSizes.bottomNavBarHeight*0.4,
               ),
-              height: 70,
+              height: AppSizes.bottomNavBarHeight,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.all(Radius.circular(50)),
@@ -112,72 +113,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// class HomePage extends StatelessWidget {
-//   const HomePage({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Stack(
-//         children: [
-//           IndexedStack(
-//             index: context.watch<NavigationProvider>().selectedIndex,
-//             children: [
-//               DashboardScreen(),
-//               CategoriesScreen(),
-//               DashboardScreen(),
-//               DashboardScreen(),
-//             ],
-//           ),
-//           Align(
-//             alignment: Alignment.bottomCenter,
-//             child: Container(
-//               margin: EdgeInsets.symmetric(
-//                 horizontal: context.deviceWidth * 0.18,
-//                 vertical: context.deviceHeight * 0.05,
-//               ),
-//               height: 70,
-//               decoration: const BoxDecoration(
-//                 color: Colors.white,
-//                 borderRadius: BorderRadius.all(Radius.circular(50)),
-//                 boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
-//               ),
-//               child: Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                 children: navItems.map((e) {
-//                   final isSelected =
-//                       context.watch<NavigationProvider>().selectedIndex ==
-//                       navItems.indexOf(e);
-//                   return GestureDetector(
-//                     onTap:() =>  context.read<NavigationProvider>().selectedIndex = navItems.indexOf(e),
-//                     child: Container(
-//                       padding: const EdgeInsets.all(12),
-//                       decoration: isSelected
-//                           ? BoxDecoration(
-//                               shape: BoxShape.circle,
-//                               color: AppColors.primaryAccent.withAlpha(100),
-//                             )
-//                           : null,
-//                       child: Icon(
-//                         faf.FaIcon(
-//                           isSelected ? e.iconFilled : e.icon,
-//                           color: AppColors.primaryAccent,
-//                         ).icon,
-//                         color: isSelected
-//                             ? AppColors.primaryDark
-//                             : AppColors.textSecondaryGrey,
-//                       ),
-//                     ),
-//                   );
-//                 }).toList(),
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class NavItemData {
   final String title;
