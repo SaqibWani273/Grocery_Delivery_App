@@ -46,7 +46,7 @@ class CollapsingGroceryAppBarDelegate extends SliverPersistentHeaderDelegate {
     final double visibleProgress = (shrinkOffset / (maxExtent - minExtent))
         .clamp(0.0, 1.0);
     final double fadeOpacity = (1.0 - visibleProgress);
-    final curveBottom = maxExtent - kMaxAscend;
+    final curveBottom = maxExtent - kMaxAscend - context.deviceHeight * 0.03;
     return Stack(
       children: [
         // 1. Dark Green Background with Wave
@@ -186,7 +186,6 @@ class _CurvedScrollItemState extends State<CurvedScrollItem> {
       -1.0,
       1.0,
     );
-    log("normalizedDistanceFromCenter: $normalizedDistanceFromCenter");
 
     setState(() {
       /*   Parabolic arc formula: items are highest at edges (normalized distance = -1 or 1)
@@ -220,7 +219,9 @@ class CurvedCategoryRow extends StatefulWidget {
 
 class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
   // Dedicated controller for horizontal scrolling
-  final ScrollController _horizontalScrollController = ScrollController();
+  final ScrollController _horizontalScrollController = ScrollController(
+    initialScrollOffset: 0.0,
+  );
 
   final List<Map<String, String>> categories = [
     {"name": "Meats", "icon": "🥩"},
@@ -231,6 +232,15 @@ class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
     {"name": "Sweets", "icon": "🍩"},
     {"name": "Snacks", "icon": "🍟"},
     {"name": "Drinks", "icon": "🍺"},
+
+    ///
+    {"name": "Veggies", "icon": "🥦"},
+    {"name": "Fruits", "icon": "🍊"},
+    {"name": "Breads", "icon": "🍞"},
+    {"name": "Cleaners", "icon": "🧴"},
+    // {"name": "Sweets", "icon": "🍩"},
+    // {"name": "Snacks", "icon": "🍟"},
+    // {"name": "Drinks", "icon": "🍺"},
   ];
 
   @override
@@ -242,56 +252,117 @@ class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 150,
+      height: 170,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return ListView.builder(
-            controller: _horizontalScrollController,
-            scrollDirection: Axis.horizontal,
-            itemCount: categories.length,
-            itemBuilder: (context, index) {
-              final item = categories[index];
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  controller: _horizontalScrollController,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    final item = categories[index];
 
-              return CurvedScrollItem(
-                scrollController: _horizontalScrollController,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      CircleAvatar(
-                        radius: constraints.maxHeight * 0.23,
-                        backgroundColor: const Color.fromARGB(
-                          255,
-                          255,
-                          240,
-                          186,
-                        ), // Creamy color from video
-                        child: Text(
-                          item["icon"]!,
-                          style: const TextStyle(fontSize: 36),
-                        ),
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.05),
-                      SizedBox(
-                        height: constraints.maxHeight * 0.15,
-                        child: Text(
-                          item["name"]!,
-                          style: const TextStyle(
-                            color: AppColors.primaryDark,
-                            fontWeight: FontWeight.bold,
+                    return SizedBox(
+                      width: context.deviceWidth * 0.2,
+                      child: CurvedScrollItem(
+                        scrollController: _horizontalScrollController,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              CircleAvatar(
+                                radius: constraints.maxHeight * 0.23,
+                                backgroundColor: const Color.fromARGB(
+                                  255,
+                                  255,
+                                  240,
+                                  186,
+                                ), // Creamy color from video
+                                child: Text(
+                                  item["icon"]!,
+                                  style: const TextStyle(fontSize: 36),
+                                ),
+                              ),
+                              SizedBox(height: constraints.maxHeight * 0.05),
+                              SizedBox(
+                                height: constraints.maxHeight * 0.15,
+                                child: Text(
+                                  item["name"]!,
+                                  style: const TextStyle(
+                                    color: AppColors.primaryDark,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: kMaxAscend * 0.1),
+                            ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: kMaxAscend * 0.2),
-                    ],
-                  ),
+                    );
+                  },
+                )
+              ),
+
+              //indicator
+              SizedBox(
+                height: context.deviceHeight * 0.03,
+
+                child: AnimatedBuilder(
+                  animation: _horizontalScrollController,
+                  builder: (context, child) {
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        ((categories.length * context.deviceWidth * 0.2) /
+                                context.deviceWidth)
+                            .ceil(),
+                        (index) {
+                          log(
+                            "${_horizontalScrollController.offset}($index) ->  ${(index + 1) * context.deviceWidth}   ---  ${index * context.deviceWidth}",
+                          );
+                          final isActive =
+                              (_horizontalScrollController.offset <=
+                                  index * context.deviceWidth) &&
+                              (_horizontalScrollController.offset >
+                                  (index - 1) * context.deviceWidth);
+                          return LinedIndicator(isActive: isActive);
+                        },
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+            ],
           );
         },
+      ),
+    );
+  }
+}
+
+class LinedIndicator extends StatelessWidget {
+  final bool isActive;
+  const LinedIndicator({super.key, required this.isActive});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: isActive ? 30 : 20,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      height: 6,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: isActive
+            ? AppColors.primaryDark
+            : AppColors.primaryDark.withAlpha(50),
       ),
     );
   }
