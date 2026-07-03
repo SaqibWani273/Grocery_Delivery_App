@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:grocery_delivery_app/app_colors.dart';
 import 'package:grocery_delivery_app/ui_extensions.dart';
 
@@ -12,8 +13,10 @@ class DashboardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
+      // floating: true,
+      pinned:true,
       delegate: CollapsingGroceryAppBarDelegate(
-        statusBarHeight: context.deviceHeight * 0.04,
+        statusBarHeight: context.statusBarHeight
       ),
     );
   }
@@ -30,11 +33,12 @@ class CollapsingGroceryAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   // Height when fully collapsed (After Scroll - just enough for search bar)
   @override
-  double get minExtent => statusBarHeight + 80.0;
+  double get minExtent => statusBarHeight +120;
 
   @override
-  bool shouldRebuild(covariant CollapsingGroceryAppBarDelegate oldDelegate) =>
-      true;
+  bool shouldRebuild(covariant CollapsingGroceryAppBarDelegate oldDelegate) =>true;
+    //  maxExtent != oldDelegate.maxExtent || minExtent != oldDelegate.minExtent;
+
 
   @override
   Widget build(
@@ -43,89 +47,88 @@ class CollapsingGroceryAppBarDelegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     // Calculate a percentage of how collapsed the bar is (0.0 = fully open, 1.0 = fully closed)
-    final double visibleProgress = (shrinkOffset / (maxExtent - minExtent))
+    final double visibleProgress = (shrinkOffset / (maxExtent - minExtent)) //maxExtent - minExtent -> total height that is going to be shrunk
         .clamp(0.0, 1.0);
     final double fadeOpacity = (1.0 - visibleProgress);
     final curveBottom = maxExtent - kMaxAscend - context.deviceHeight * 0.03;
-    return Stack(
-      children: [
-        // 1. Dark Green Background with Wave
-        ClipPath(
-          clipper: OutwardCurve(
-            x0: 0.0,
-            y0: curveBottom - 70,
-
-            x1: context.deviceWidth / 2,
-            y1: curveBottom,
-            x2: context.deviceWidth,
-            y2: curveBottom - 70,
-          ),
-          child: Container(color: AppColors.primaryDark),
-        ),
-
+    return 
+     ClipPath(
+      
+       child: OverflowBox(
+        alignment: Alignment.bottomCenter, // <- pins the LAST portion, not the first
+        minHeight: maxExtent,
+        maxHeight: maxExtent,  
+         child: Stack(
+           children: [
+             ClipPath(
+                  clipper: OutwardCurve(
+                    x0: 0.0,
+                    y0: curveBottom - 70,
+             
+                    x1: context.deviceWidth / 2,
+                    y1: curveBottom,
+                    x2: context.deviceWidth,
+                    y2: curveBottom - 70,
+                  ),
+                  child: Container(color: AppColors.primaryDark),
+                ),
+                 
         // 2. Fading Content (Location & Categories)
         Opacity(
           opacity: fadeOpacity,
           child: Padding(
-            padding: EdgeInsets.only(top: statusBarHeight + 75.0),
-
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Current Location\nCalifornia, USA ',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white.withOpacity(0.9)),
-                ),
-              ],
+            padding: EdgeInsets.only(top: statusBarHeight + 60.0),
+       
+            child: SizedBox(
+              height: 120,
+              width: context.deviceWidth,
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Current Location ',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: const Color.fromARGB(255, 183, 183, 186), fontSize: 12,fontWeight: FontWeight.w800),
+                  ),
+                  SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: .center,
+                      children: [
+                        Text(
+                           "California, USA" ,
+                          style: context.textTheme.titleLarge?.copyWith(
+                            color: AppColors.textTeritiaryColor,
+                            fontWeight: FontWeight.bold,
+                            
+                            fontSize: 18,
+                          )
+                         
+                          ),
+                          Icon(
+                            Icons.location_on,
+                            color: AppColors.textTeritiaryColor,
+                            size: 18,
+                            fontWeight: FontWeight.w800
+                          ),
+                      ],
+                    ),
+                  
+                ],
+              ),
             ),
           ),
         ),
-
-        // 3. Persistent Floating Content (Search Bar & Cart Icon)
-        // Stays at the top but shifts downwards slightly as it collapses
-        Positioned(
-          top: statusBarHeight + (12.0 * fadeOpacity),
-          left: 16,
-          right: 16,
-          child: Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: const Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Icon(Icons.search, color: Colors.grey),
-                      ),
-                      Text(
-                        'Search for "Grocery"',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 25,
-                child: Icon(
-                  Icons.shopping_cart_outlined,
-                  color: AppColors.primaryDark,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Positioned(left: 0, right: 0, bottom: 0, child: CurvedCategoryRow()),
-      ],
-    );
+       
+        Positioned(left: 0, right: 0, bottom: 0, child: Opacity(
+          opacity: fadeOpacity,
+          child: CurvedCategoryRow())),
+           ],
+         ),
+       ),
+     );
+    
+ 
   }
 }
 
@@ -155,7 +158,9 @@ class _CurvedScrollItemState extends State<CurvedScrollItem> {
     // Listen to scroll events to recalculate position dynamically
     widget.scrollController.addListener(_calculateOffset);
     // Calculate initial position after the first frame
-    WidgetsBinding.instance.addPostFrameCallback((_) => _calculateOffset());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _calculateOffset();
+    });
   }
 
   @override
@@ -222,7 +227,15 @@ class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
   final ScrollController _horizontalScrollController = ScrollController(
     initialScrollOffset: 0.0,
   );
-
+@override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      //initially put it as a work around to make sure items remain in curved position after coming back from another screen
+     _horizontalScrollController.animateTo(200, duration: Duration(milliseconds: 1500), curve: Curves.fastOutSlowIn);
+      
+    });
+    super.initState();
+  }
   final List<Map<String, String>> categories = [
     {"name": "Meats", "icon": "🥩"},
     {"name": "Veggies", "icon": "🥦"},
@@ -232,15 +245,11 @@ class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
     {"name": "Sweets", "icon": "🍩"},
     {"name": "Snacks", "icon": "🍟"},
     {"name": "Drinks", "icon": "🍺"},
-
-    ///
-    {"name": "Veggies", "icon": "🥦"},
-    {"name": "Fruits", "icon": "🍊"},
-    {"name": "Breads", "icon": "🍞"},
-    {"name": "Cleaners", "icon": "🧴"},
-    // {"name": "Sweets", "icon": "🍩"},
-    // {"name": "Snacks", "icon": "🍟"},
-    // {"name": "Drinks", "icon": "🍺"},
+    {"name": "Dairy", "icon": "🧀"},
+    {"name": "Frozen", "icon": "🥶"},
+    {"name": "fish", "icon": "🐟"},
+    {"name": "Can", "icon": "🥫"},
+   
   ];
 
   @override
@@ -302,6 +311,20 @@ class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
                                 ),
                               ),
                               const SizedBox(height: kMaxAscend * 0.1),
+                            ],
+                          ).animate(
+                            effects: [
+                              // FadeEffect(
+                              //   duration: 300.ms,
+                              //   delay: (index * 100).ms,
+                              // ),
+                              // SlideEffect(
+                              //   begin: const Offset(0.0, 0.3),
+                              //   end: Offset.zero,
+                              //   duration: 300.ms,
+                              //   curve: Curves.easeOut,
+                              //   delay: (index * 100).ms,
+                              // ),
                             ],
                           ),
                         ),

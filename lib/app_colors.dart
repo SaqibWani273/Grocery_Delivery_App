@@ -38,6 +38,7 @@ class AppColors {
 
   /// Left banner text color
   static const Color groceryBannerText = Color(0xFF634205);
+  static const Color textTeritiaryColor = Color.fromARGB(255, 189, 165, 121);
 
   /// Right banner background (Wholesale)
   static const Color wholesaleBannerBg = Color(0xFFFCDADA);
