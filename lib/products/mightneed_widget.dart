@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_delivery_app/app_colors.dart';
 import 'package:grocery_delivery_app/app_sizes.dart';
+import 'package:grocery_delivery_app/main.dart';
 import 'package:grocery_delivery_app/products/product_card.dart';
 import 'package:grocery_delivery_app/products/all_products_screen.dart';
+import 'package:grocery_delivery_app/products/products_provider.dart';
 import 'package:grocery_delivery_app/ui_extensions.dart';
+import 'package:provider/provider.dart';
 
 import '../models/product_model.dart';
 
 class YouMightNeedSection extends StatelessWidget {
-  final List<ProductModel> products;
-  const YouMightNeedSection({super.key, required this.products});
+  
+  const YouMightNeedSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -53,21 +56,26 @@ class YouMightNeedSection extends StatelessWidget {
         ),
 
         // Horizontal Product Items
-        SizedBox(
-          height: context.deviceHeight * 0.3,
-          width: context.deviceWidth,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.only(left: AppSizes.dashboardLeftPadding, right: 8.0),
-            itemCount: products.length,
-
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: ProductCard(product: products[index]),
-              );
-            },
-          ),
+        Consumer< ProductsProvider>(
+          builder: (  context,p,_) {
+            final products= p.allProducts.sublist(0, productsList.length~/1.5);
+            return SizedBox(
+              height: context.deviceHeight * 0.3,
+              width: context.deviceWidth,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(left: AppSizes.dashboardLeftPadding, right: 8.0),
+                itemCount: products.length,
+            
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: ProductCard(product: products[index], cartIconKey: CartIconAnchor.key,),
+                  );
+                },
+              ),
+            );
+          }
         ),
       ],
     );

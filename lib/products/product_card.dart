@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grocery_delivery_app/app_colors.dart';
+import 'package:grocery_delivery_app/main.dart';
 import 'package:grocery_delivery_app/models/product_model.dart';
+import 'package:grocery_delivery_app/products/products_provider.dart';
 import 'package:grocery_delivery_app/ui_extensions.dart';
+import 'package:provider/provider.dart';
+
+import '../common_widgets/cart_fly_animation.dart';
 
 final textStyle = TextStyle(
   color: AppColors.textPrimaryDark,
@@ -14,15 +19,35 @@ final textStyle = TextStyle(
 
 class ProductCard extends StatelessWidget {
   final ProductModel product;
+  final GlobalKey cartIconKey;
 
-  const ProductCard({super.key, required this.product});
+  const ProductCard({super.key, required this.product, required this.cartIconKey});
 
   @override
   Widget build(BuildContext context) {
+    final imgSize= context.deviceHeight*0.1;
+    void flyAnimation(bool isAdding)=>CartFlyAnimation.fly(
+      buttonContext: context,
+      cartIconKey: cartIconKey,
+      icon:  Image.asset(
+        product.image,
+        height: imgSize,
+        width: imgSize,
+      ),
+      onComplete: () {
+        // Add the product to the cart
+        context.read<ProductsProvider>().updateCartCount(
+          product,
+          increment: isAdding
+
+        );
+      },
+    );
     final int count = product.cartCount;
     final bool isSelected = count > 0;
 
     return Container(
+      
       width: context.deviceWidth * 0.31,
 
       decoration: BoxDecoration(
@@ -43,7 +68,10 @@ class ProductCard extends StatelessWidget {
             flex: 2,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Image.asset(product.image, fit: BoxFit.contain),
+              child: Image.asset(product.image,
+              height: imgSize ,
+              width: imgSize,
+               fit: BoxFit.contain),
             ),
           ),
 
@@ -90,17 +118,7 @@ class ProductCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
             child: isSelected
-                ? _buildActiveCounter(count)
-                : _buildInactiveAddButton(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Green Active Counter (+ / - Selector)
-  Widget _buildActiveCounter(int currentCount) {
-    return Container(
+                ? Container(
       height: 36,
       decoration: BoxDecoration(
         color: AppColors.primaryAccent,
@@ -109,28 +127,48 @@ class ProductCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          const Icon(
-            Icons.remove_circle_outline,
-            color: AppColors.primaryDark,
-            size: 20,
+          GestureDetector(
+            onTap: () => context.read<ProductsProvider>().updateCartCount(
+          product,
+          increment: false
+
+        ),
+            child: const Icon(
+              Icons.remove_circle_outline,
+              color: AppColors.textAccentOrange,
+              size: 20,
+            ),
           ),
           Text(
-            '$currentCount',
+            '$count',
             style: const TextStyle(
               color: AppColors.primaryDark,
               fontWeight: FontWeight.bold,
               fontSize: 15,
             ),
           ),
-          const Icon(
-            Icons.add_circle_outline,
-            color: AppColors.primaryDark,
-            size: 20,
+          GestureDetector(
+            onTap: () => flyAnimation(true),
+            child: const Icon(
+              Icons.add_circle_outline,
+              color: AppColors.primaryDark,
+              size: 20,
+            ),
+          ),
+        ],
+      ),
+    )
+                : GestureDetector(
+                  onTap: () => flyAnimation(true),
+                  child: _buildInactiveAddButton()),
           ),
         ],
       ),
     );
   }
+
+  // Green Active Counter (+ / - Selector)
+
 
   // Faded Grey Plus Add Button Setup
   Widget _buildInactiveAddButton() {

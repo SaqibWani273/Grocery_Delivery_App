@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:grocery_delivery_app/app_colors.dart';
+import 'package:grocery_delivery_app/products/products_provider.dart';
+import 'package:provider/provider.dart';
 
 class SearchBarWidget extends StatelessWidget {
   final double? height;
@@ -42,24 +44,78 @@ class SearchBarWidget extends StatelessWidget {
 }
 
 class CartIcon extends StatelessWidget {
-  const CartIcon({
-    super.key,
-  });
+  final GlobalKey cartKey;
+  const CartIcon({super.key, required this.cartKey  });
 
   @override
   Widget build(BuildContext context) {
+    int cartCount = context.watch<ProductsProvider>().cartItemsCountNotifier.value;
     return Hero(
       tag: 'cart_icon',
       child: Material(
          type: MaterialType.transparency,
-        child: CircleAvatar(
-          backgroundColor: Colors.white,
-          radius: 25,
-          child: Icon(
-            Icons.shopping_cart_outlined,
-            color: AppColors.primaryDark,
-          ),
+        child: Stack(
+          key:cartKey,
+          // alignment: Alignment.topRight,
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.white,
+              radius: 25,
+              child: Icon(
+                Icons.shopping_cart_outlined,
+                color: AppColors.primaryDark,
+              ),
+            ),
+            if( cartCount>0 )
+            Positioned(
+              right: 4,
+              top: 4,
+              child: CartBadge(
+                count: cartCount,
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class CartBadge extends StatefulWidget {
+  final int count;
+  const CartBadge({super.key, required this.count});
+
+  @override
+  State<CartBadge> createState() => _CartBadgeState();
+}
+
+class _CartBadgeState extends State<CartBadge> with SingleTickerProviderStateMixin {
+  late final AnimationController _bounce =
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 250));
+
+  @override
+  void didUpdateWidget(covariant CartBadge oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.count != oldWidget.count) {
+      _bounce.forward(from: 0).then((_) => _bounce.reverse());
+    }
+  }
+
+  @override
+  void dispose() {
+    _bounce.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: Tween(begin: 1.0, end: 1.35).animate(CurvedAnimation(parent: _bounce, curve: Curves.easeOut)),
+      child:
+       CircleAvatar(
+        radius: 8,
+        backgroundColor: Colors.red,
+        child: Text('${widget.count}', style: const TextStyle(fontSize: 11, color: Colors.white)),
       ),
     );
   }

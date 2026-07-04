@@ -11,10 +11,12 @@ class CollapsingGroceryAppBarDelegate extends SliverPersistentHeaderDelegate {
   final double? childHeight;
   final double childrenMaxHeight;
   final double? kMaxAscend; //this is needed only in dashboard screen,
+  final Function(bool)? onAppbarCollapsed;
 
   CollapsingGroceryAppBarDelegate({required this.statusBarHeight,
   this.child,
    this.children = const [], this.paddingTop, this.childrenMaxHeight = 230.0,
+   this.onAppbarCollapsed,
    
    this.childHeight=30,
     this.kMaxAscend});
@@ -46,7 +48,7 @@ class CollapsingGroceryAppBarDelegate extends SliverPersistentHeaderDelegate {
         .clamp(0.0, 1.0);
     final double fadeOpacity = (1.0 - visibleProgress);
     final curveBottom = maxExtent - ( kMaxAscend ?? 0) -(child==null ? 0 : childHeight!*0.5) - context.deviceHeight * 0.01;
-    
+    if(visibleProgress==1.0 || visibleProgress==0.0)onAppbarCollapsed?.call(visibleProgress==1.0); 
     return 
      ClipPath(
       

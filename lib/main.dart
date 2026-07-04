@@ -5,12 +5,18 @@ import 'package:grocery_delivery_app/app_sizes.dart';
 import 'package:grocery_delivery_app/categories_screen.dart';
 import 'package:grocery_delivery_app/dashboard/dashboard_provider.dart';
 import 'package:grocery_delivery_app/dashboard/dashboard_screen.dart';
+import 'package:grocery_delivery_app/models/product_model.dart';
 import 'package:grocery_delivery_app/navigation_provider.dart';
+import 'package:grocery_delivery_app/products/products_provider.dart';
 import 'package:grocery_delivery_app/ui_extensions.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
 
-
+class CartIconAnchor {
+  static final GlobalKey key = GlobalKey();
+  static final GlobalKey key2 = GlobalKey();
+  static final GlobalKey key3 = GlobalKey();
+}
 void main() {
   runApp(const MyApp());
 }
@@ -20,21 +26,32 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: GoogleFonts.poppins().fontFamily,
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-        scaffoldBackgroundColor: Colors.grey.shade200
-      ),
-      home: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (context) => NavigationProvider()),
-          ChangeNotifierProvider(create: (context) => DashboardProvider()),
-         
-        ],
-        child: const HomePage(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => NavigationProvider()),
+        ChangeNotifierProvider(create: (context) => DashboardProvider()),
+        ChangeNotifierProvider(create: (context) => ProductsProvider(allProducts: productsList)),
+        
+       
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: GoogleFonts.poppins().fontFamily,
+          colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+          scaffoldBackgroundColor: Colors.grey.shade200
+        ),
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => NavigationProvider()),
+            ChangeNotifierProvider(create: (context) => DashboardProvider()),
+            
+           
+          ],
+          child: const HomePage(),
+        ),
+        
       ),
     );
   }

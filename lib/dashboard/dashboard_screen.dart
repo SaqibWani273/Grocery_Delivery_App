@@ -8,6 +8,7 @@ import 'package:grocery_delivery_app/ui_extensions.dart';
 
 
 import '../app_sizes.dart';
+import '../main.dart';
 import '../models/product_model.dart';
 import 'widgets/featured_stores_widget.dart';
 import 'widgets/promo_banner_widget.dart';
@@ -25,7 +26,7 @@ class DashboardScreen extends StatelessWidget {
             DashboardHeader(),
             
             SliverToBoxAdapter(child: YouMightNeedSection(
-            products:productsList. sublist(0, productsList.length~/1.5), // 
+          // 
           )),
           SliverToBoxAdapter(child: SizedBox(height: AppSizes.sectionPadding)),
            SliverToBoxAdapter(child: PromoBannersRow()),
@@ -49,7 +50,10 @@ class DashboardScreen extends StatelessWidget {
                 height: 45,
                )),
                const SizedBox(width: 16),
-            CartIcon(),
+            CartIcon(
+              cartKey: CartIconAnchor.key,
+            
+            ),
              ],
            ),
          )      
