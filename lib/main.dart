@@ -6,9 +6,12 @@ import 'package:grocery_delivery_app/categories_screen.dart';
 import 'package:grocery_delivery_app/dashboard/dashboard_provider.dart';
 import 'package:grocery_delivery_app/dashboard/dashboard_screen.dart';
 import 'package:grocery_delivery_app/navigation_provider.dart';
+import 'package:grocery_delivery_app/products/products_provider.dart';
 import 'package:grocery_delivery_app/ui_extensions.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
+
+import 'models/product_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,6 +33,7 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (context) => NavigationProvider()),
           ChangeNotifierProvider(create: (context) => DashboardProvider()),
+         
         ],
         child: const HomePage(),
       ),

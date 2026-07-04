@@ -17,6 +17,7 @@ class AppColors {
   // --- Backgrounds & Neutrals ---
   /// Main background color for the body/scaffold.
   static const Color background = Color.fromARGB(239, 251, 251, 251);
+  static const Color primaryLight =    Colors.white;
 
   /// Pure white used for the search bar, product cards, and bottom navigation bar background.
   static const Color cardBackground = Colors.white;

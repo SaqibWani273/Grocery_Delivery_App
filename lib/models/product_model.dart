@@ -81,7 +81,16 @@ const productsData=  [
         'priceInt': '14',
         'priceDec': '.29\$',
         'image': 'assets/images/avocado.png',
-        'initialCount': 1,
+        'initialCount': 0,
+      },
+       {
+        'name': 'Fresh Lemon\n(Local shop)',
+        'weight': '500 gm.',
+        'priceInt': '10',
+        'priceDec': '.29\$',
+        'image': 'assets/images/lemon.png',
+        'initialCount': 0,
+        
       },
       {
         'name': 'Deshi Gajor\n(Local Carrot)',
@@ -91,6 +100,82 @@ const productsData=  [
         'image': 'assets/images/carrots.png',
         'initialCount': 0,
       },
+      {
+        'name': 'Fresh Broccoli\n(Local shop)',
+        'weight': '500 gm.',
+        'priceInt': '19',
+        'priceDec': '.29\$',
+        'image': 'assets/images/broccoli.png',
+        'initialCount': 0,
+      },
+     
+      {
+        'name': 'Sprite\n(Local shop)',
+        'weight': '500 ml.',
+        'priceInt': '5',
+        'priceDec': '.29\$',
+        'image': 'assets/images/sprite.png',
+        'initialCount': 0,
+      },
+      {
+        'name': 'Fresh Tomato\n(Local shop)',
+        'weight': '500 gm.',
+        'priceInt': '15',
+        'priceDec': '.29\$',
+        'image': 'assets/images/tomato.png',
+        'initialCount': 0,
+      },
+       {
+        'name': 'Fresh Meat\n(Local shop)',
+        'weight': '500 gm.',
+        'priceInt': '15',
+        'priceDec': '.29\$',
+        'image': 'assets/images/beef.png',
+        'initialCount': 0,
+      },
+       {
+        'name': 'Fresh Cucumber\n(Local shop)',
+        'weight': '500 gm.',
+        'priceInt': '12',
+        'priceDec': '.29\$',
+        'image': 'assets/images/cucumber.png',
+        'initialCount': 0,
+      },
+      //repeating items for testing
+       {
+        'name': 'Beetroot\n(Local shop)',
+        'weight': '500 gm.',
+        'priceInt': '17',
+        'priceDec': '.29\$',
+        'image': 'assets/images/beetroots.png',
+        'initialCount': 0,
+      },
+      {
+        'name': 'Sprite\n(Local shop)',
+        'weight': '500 ml.',
+        'priceInt': '5',
+        'priceDec': '.29\$',
+        'image': 'assets/images/sprite.png',
+        'initialCount': 0,
+      },
+       {
+        'name': 'Fresh Lemon\n(Local shop)',
+        'weight': '500 gm.',
+        'priceInt': '10',
+        'priceDec': '.29\$',
+        'image': 'assets/images/lemon.png',
+        'initialCount': 0,
+        
+      },
+      {
+        'name': 'Fresh Cucumber\n(Local shop)',
+        'weight': '500 gm.',
+        'priceInt': '12',
+        'priceDec': '.29\$',
+        'image': 'assets/images/cucumber.png',
+        'initialCount': 0,
+      },
+     
     ];
 
     final productsList= productsData.map((e) => ProductModel.fromJson(e)).toList();

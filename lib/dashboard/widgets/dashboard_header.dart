@@ -1,11 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:grocery_delivery_app/app_colors.dart';
+import 'package:grocery_delivery_app/common_widgets/sliver_header_delegate.dart';
 import 'package:grocery_delivery_app/ui_extensions.dart';
-
-import 'custom_shapes.dart';
 
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({super.key});
@@ -13,79 +9,10 @@ class DashboardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
-      // floating: true,
       pinned:true,
       delegate: CollapsingGroceryAppBarDelegate(
-        statusBarHeight: context.statusBarHeight
-      ),
-    );
-  }
-}
-
-class CollapsingGroceryAppBarDelegate extends SliverPersistentHeaderDelegate {
-  final double statusBarHeight;
-
-  CollapsingGroceryAppBarDelegate({required this.statusBarHeight});
-
-  // Total height when fully expanded (Before Scroll)
-  @override
-  double get maxExtent => statusBarHeight + 220.0 + kMaxAscend;
-
-  // Height when fully collapsed (After Scroll - just enough for search bar)
-  @override
-  double get minExtent => statusBarHeight +120;
-
-  @override
-  bool shouldRebuild(covariant CollapsingGroceryAppBarDelegate oldDelegate) =>true;
-    //  maxExtent != oldDelegate.maxExtent || minExtent != oldDelegate.minExtent;
-
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    // Calculate a percentage of how collapsed the bar is (0.0 = fully open, 1.0 = fully closed)
-    final double visibleProgress = (shrinkOffset / (maxExtent - minExtent)) //maxExtent - minExtent -> total height that is going to be shrunk
-        .clamp(0.0, 1.0);
-    final double fadeOpacity = (1.0 - visibleProgress);
-    final curveBottom = maxExtent - kMaxAscend - context.deviceHeight * 0.03;
-    return 
-     ClipPath(
-      
-       child: OverflowBox(
-        alignment: Alignment.bottomCenter, // <- pins the LAST portion, not the first
-        minHeight: maxExtent,
-        maxHeight: maxExtent,  
-         child: Stack(
-           children: [
-             ClipPath(
-                  clipper: OutwardCurve(
-                    x0: 0.0,
-                    y0: curveBottom - 70,
-             
-                    x1: context.deviceWidth / 2,
-                    y1: curveBottom,
-                    x2: context.deviceWidth,
-                    y2: curveBottom - 70,
-                  ),
-                  child: Container(color: AppColors.primaryDark),
-                ),
-                 
-        // 2. Fading Content (Location & Categories)
-        Opacity(
-          opacity: fadeOpacity,
-          child: Padding(
-            padding: EdgeInsets.only(top: statusBarHeight + 60.0),
-       
-            child: SizedBox(
-              height: 120,
-              width: context.deviceWidth,
-              child: Column(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+        statusBarHeight: context.statusBarHeight,kMaxAscend: 45,
+        paddingTop: context.statusBarHeight + 60.0,children:[
                   Text(
                     'Current Location ',
                     textAlign: TextAlign.center,
@@ -113,35 +40,38 @@ class CollapsingGroceryAppBarDelegate extends SliverPersistentHeaderDelegate {
                           ),
                       ],
                     ),
+                    
+                    Expanded(
+                      child: LayoutBuilder( builder : (context, constraints) {
+                        return SizedBox(
+                          height: constraints.maxHeight,
+                          child: CurvedCategoryRow(
+                            
+                            maxHeight: constraints.maxHeight,
+                            kMaxAscend: 45.0 // Pass the maximum vertical offset to the CurvedCategoryRow
+                          ),
+                        );
+                      }),
+                    )
                   
                 ],
-              ),
-            ),
-          ),
-        ),
-       
-        Positioned(left: 0, right: 0, bottom: 0, child: Opacity(
-          opacity: fadeOpacity,
-          child: CurvedCategoryRow())),
-           ],
-         ),
-       ),
-     );
-    
- 
+      ),
+    );
   }
 }
 
-///
-const double kMaxAscend = 45.0;
+
+
 
 class CurvedScrollItem extends StatefulWidget {
   final Widget child;
+  final double kMaxAscend;// Maximum vertical offset for the parabolic curve
   final ScrollController scrollController;
 
   const CurvedScrollItem({
     super.key,
     required this.child,
+    required this.kMaxAscend,
     required this.scrollController,
   });
 
@@ -201,7 +131,7 @@ class _CurvedScrollItemState extends State<CurvedScrollItem> {
 
       // items are most ascendeded upwards at edges & least at center
       _offsetY =
-          -kMaxAscend *
+          -widget.kMaxAscend *
           ((normalizedDistanceFromCenter * normalizedDistanceFromCenter));
     });
   }
@@ -216,7 +146,9 @@ class _CurvedScrollItemState extends State<CurvedScrollItem> {
 }
 
 class CurvedCategoryRow extends StatefulWidget {
-  const CurvedCategoryRow({super.key});
+  final double maxHeight;
+  final double kMaxAscend; // Maximum vertical offset for the parabolic curve
+  const CurvedCategoryRow({super.key, required this.maxHeight, required this.kMaxAscend});
 
   @override
   State<CurvedCategoryRow> createState() => _CurvedCategoryRowState();
@@ -261,13 +193,15 @@ class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 170,
+      // height: 170,
+      height: widget.maxHeight,
       child: LayoutBuilder(
         builder: (context, constraints) {
           return Column(
-            mainAxisSize: MainAxisSize.min,
+            // mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              
               Expanded(
                 child: ListView.builder(
                   controller: _horizontalScrollController,
@@ -279,9 +213,14 @@ class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
                     return SizedBox(
                       width: context.deviceWidth * 0.2,
                       child: CurvedScrollItem(
+                        kMaxAscend: widget.kMaxAscend, // Pass the maximum vertical offset to the CurvedScrollItem
                         scrollController: _horizontalScrollController,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                          padding: const EdgeInsets.only(
+                            left: 12.0,
+                            right: 12.0,
+                            // top: 8.0,
+                          ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -299,7 +238,7 @@ class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
                                   style: const TextStyle(fontSize: 36),
                                 ),
                               ),
-                              SizedBox(height: constraints.maxHeight * 0.05),
+                              // SizedBox(height: constraints.maxHeight * 0.01),
                               SizedBox(
                                 height: constraints.maxHeight * 0.15,
                                 child: Text(
@@ -310,23 +249,9 @@ class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: kMaxAscend * 0.1),
+                               SizedBox(height: widget.kMaxAscend * 0.05),
                             ],
-                          ).animate(
-                            effects: [
-                              // FadeEffect(
-                              //   duration: 300.ms,
-                              //   delay: (index * 100).ms,
-                              // ),
-                              // SlideEffect(
-                              //   begin: const Offset(0.0, 0.3),
-                              //   end: Offset.zero,
-                              //   duration: 300.ms,
-                              //   curve: Curves.easeOut,
-                              //   delay: (index * 100).ms,
-                              // ),
-                            ],
-                          ),
+                          )
                         ),
                       ),
                     );
@@ -348,9 +273,7 @@ class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
                                 context.deviceWidth)
                             .ceil(),
                         (index) {
-                          log(
-                            "${_horizontalScrollController.offset}($index) ->  ${(index + 1) * context.deviceWidth}   ---  ${index * context.deviceWidth}",
-                          );
+                          
                           final isActive =
                               (_horizontalScrollController.offset <=
                                   index * context.deviceWidth) &&

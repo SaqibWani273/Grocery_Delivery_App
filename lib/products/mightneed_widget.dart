@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_delivery_app/app_colors.dart';
 import 'package:grocery_delivery_app/app_sizes.dart';
-import 'package:grocery_delivery_app/dashboard/widgets/product_card.dart';
+import 'package:grocery_delivery_app/products/product_card.dart';
+import 'package:grocery_delivery_app/products/all_products_screen.dart';
 import 'package:grocery_delivery_app/ui_extensions.dart';
 
-import '../../models/product_model.dart';
+import '../models/product_model.dart';
 
 class YouMightNeedSection extends StatelessWidget {
   final List<ProductModel> products;
@@ -30,7 +31,13 @@ class YouMightNeedSection extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  // Navigate to the MoreProductsScreen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MoreProductsScreen()),
+                  );
+                },
                 style: TextButton.styleFrom(padding: EdgeInsets.zero),
                 child: Text(
                   'See more',
