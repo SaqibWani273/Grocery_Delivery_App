@@ -35,7 +35,8 @@ class _MoreProductsScreenState extends State<MoreProductsScreen> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      backgroundColor: AppColors.background,
+      //workaround to avoid the white flash when navigating to this screen
+      // backgroundColor: AppColors.background.withOpacity(1),
       body: ChangeNotifierProvider<ProductsProvider>(
         create: (context) => ProductsProvider(allProducts: productsList),
         builder: (context, child) {

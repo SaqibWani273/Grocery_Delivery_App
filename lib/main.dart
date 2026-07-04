@@ -6,12 +6,10 @@ import 'package:grocery_delivery_app/categories_screen.dart';
 import 'package:grocery_delivery_app/dashboard/dashboard_provider.dart';
 import 'package:grocery_delivery_app/dashboard/dashboard_screen.dart';
 import 'package:grocery_delivery_app/navigation_provider.dart';
-import 'package:grocery_delivery_app/products/products_provider.dart';
 import 'package:grocery_delivery_app/ui_extensions.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
 
-import 'models/product_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,6 +26,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: GoogleFonts.poppins().fontFamily,
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        scaffoldBackgroundColor: Colors.grey.shade200
       ),
       home: MultiProvider(
         providers: [
@@ -52,7 +51,7 @@ class HomePage extends StatelessWidget {
     final selectedIndex = context.watch<NavigationProvider>().selectedIndex;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // backgroundColor: AppColors.background,
       body: Stack(
         children: [
           // Swap IndexedStack for PageView
