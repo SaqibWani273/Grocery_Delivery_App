@@ -26,6 +26,9 @@ class AppColors {
   /// The off-white/cream background color used specifically for the circular category buttons.
   static const Color categoryCircleBg = Color(0xFFFFF7DF);
 
+  /// Deep purple used for store price badges and the store profile header.
+  static const Color storePurple = Color(0xFF7B2E8B);
+
   // --- Typography & Accents ---
   /// The orange/coral color used for "See more", prices, and badges.
   static const Color textAccentOrange = Color(0xFFD95333);

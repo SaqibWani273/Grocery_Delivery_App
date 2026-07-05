@@ -44,12 +44,7 @@ class DetailsCurvedHeader extends SliverPersistentHeaderDelegate {
           left: 0,
           right: 0,
           bottom: _curveDepth - 24,
-          child: Center(
-            child: CustomPaint(
-              size: const Size(52, 10),
-              painter: _DragHandlePainter(),
-            ),
-          ),
+          child: const Center(child: DragHandleArc()),
         ),
 
         Positioned(
@@ -99,24 +94,4 @@ class DetailsCurvedHeader extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(covariant DetailsCurvedHeader oldDelegate) =>
       statusBarHeight != oldDelegate.statusBarHeight;
-}
-
-class _DragHandlePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.grey.shade300
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
-
-    final path = Path()
-      ..moveTo(0, 2)
-      ..quadraticBezierTo(size.width / 2, size.height, size.width, 2);
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _DragHandlePainter oldDelegate) => false;
 }

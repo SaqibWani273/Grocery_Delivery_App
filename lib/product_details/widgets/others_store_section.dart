@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:grocery_delivery_app/app_colors.dart';
 import 'package:grocery_delivery_app/models/store_model.dart';
 import 'package:grocery_delivery_app/product_details/product_details_provider.dart';
+import 'package:grocery_delivery_app/product_details/widgets/choose_store_sheet.dart';
 import 'package:grocery_delivery_app/ui_extensions.dart';
 import 'package:provider/provider.dart';
 
-const _badgePurple = Color(0xFF7B2E8B);
 
 /// "Others store" list — the same product offered by nearby stores,
 /// with one offer selectable at a time.
@@ -33,7 +33,7 @@ class OthersStoreSection extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () => showChooseStoreSheet(context),
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
               child: const Text(
                 'Visit stores',
@@ -147,7 +147,7 @@ class StoreOfferCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                   decoration: const BoxDecoration(
-                    color: _badgePurple,
+                    color: AppColors.storePurple,
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(14),
                       bottomLeft: Radius.circular(14),
