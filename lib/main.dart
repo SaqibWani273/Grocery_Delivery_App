@@ -16,6 +16,7 @@ class CartIconAnchor {
   static final GlobalKey key = GlobalKey();
   static final GlobalKey key2 = GlobalKey();
   static final GlobalKey key3 = GlobalKey();
+  static final GlobalKey key4 = GlobalKey();
 }
 void main() {
   runApp(const MyApp());

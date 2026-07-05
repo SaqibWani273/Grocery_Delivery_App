@@ -26,3 +26,35 @@ class OutwardCurve extends CustomClipper<Path> {
   @override
   bool shouldReclip(covariant OutwardCurve oldClipper) => false;
 }
+
+/// The inverse of [OutwardCurve]: the bottom edge stays low at the corners
+/// and rises as a dome towards the center, so the sheet below shows through
+/// as an upward arc. Used by the product details header.
+class InwardCurve extends CustomClipper<Path> {
+  /// How far the dome crest rises above the bottom corners.
+  final double depth;
+
+  InwardCurve({required this.depth});
+
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0, size.height);
+
+    // Control point sits 2*depth above the corners, putting the curve's
+    // midpoint exactly `depth` above them.
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height - 2 * depth,
+      size.width,
+      size.height,
+    );
+
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant InwardCurve oldClipper) => depth != oldClipper.depth;
+}

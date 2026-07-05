@@ -8,12 +8,13 @@ class CartFlyAnimation {
     required BuildContext buttonContext,
     required GlobalKey cartIconKey,
     Widget icon = const Icon(Icons.shopping_bag, color: Colors.white, size: 16),
+    Offset startAnchorOffset = const Offset(0, -90), // default lifts the start to the product image above the + icon
     VoidCallback? onComplete,
   }) {
     final overlayState = Overlay.of(buttonContext);
 
     final RenderBox buttonBox = buttonContext.findRenderObject() as RenderBox;
-    final startOffset = buttonBox.localToGlobal(buttonBox.size.center(Offset(0, -90))); // -90 as the image is above the + icon
+    final startOffset = buttonBox.localToGlobal(buttonBox.size.center(startAnchorOffset));
 
     final RenderBox? cartBox =
         cartIconKey.currentContext?.findRenderObject() as RenderBox?;

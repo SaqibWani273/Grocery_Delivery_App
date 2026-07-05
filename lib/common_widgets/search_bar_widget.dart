@@ -45,38 +45,44 @@ class SearchBarWidget extends StatelessWidget {
 
 class CartIcon extends StatelessWidget {
   final GlobalKey cartKey;
-  const CartIcon({super.key, required this.cartKey  });
+  // Disable when another CartIcon on the same route already owns the
+  // 'cart_icon' hero tag (duplicate tags break route transitions).
+  final bool enableHero;
+  const CartIcon({super.key, required this.cartKey, this.enableHero = true});
 
   @override
   Widget build(BuildContext context) {
     int cartCount = context.watch<ProductsProvider>().cartItemsCountNotifier.value;
+    final icon = Material(
+       type: MaterialType.transparency,
+      child: Stack(
+        key:cartKey,
+        // alignment: Alignment.topRight,
+        children: [
+          CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 25,
+            child: Icon(
+              Icons.shopping_cart_outlined,
+              color: AppColors.primaryDark,
+            ),
+          ),
+          if( cartCount>0 )
+          Positioned(
+            right: 4,
+            top: 4,
+            child: CartBadge(
+              count: cartCount,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (!enableHero) return icon;
     return Hero(
       tag: 'cart_icon',
-      child: Material(
-         type: MaterialType.transparency,
-        child: Stack(
-          key:cartKey,
-          // alignment: Alignment.topRight,
-          children: [
-            CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 25,
-              child: Icon(
-                Icons.shopping_cart_outlined,
-                color: AppColors.primaryDark,
-              ),
-            ),
-            if( cartCount>0 )
-            Positioned(
-              right: 4,
-              top: 4,
-              child: CartBadge(
-                count: cartCount,
-              ),
-            ),
-          ],
-        ),
-      ),
+      child: icon,
     );
   }
 }

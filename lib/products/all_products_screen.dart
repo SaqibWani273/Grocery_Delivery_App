@@ -12,8 +12,8 @@ import 'products_provider.dart';
 
 const List<String> categories = [
   'Bakery',
-  'Fresh',
   'Beverages',
+  'Fresh',
   'Snacks',
   'Frozen',
   'Dairy & Eggs',
@@ -38,7 +38,9 @@ class _MoreProductsScreenState extends State<MoreProductsScreen> {
     return Scaffold(
       floatingActionButton: ValueListenableBuilder(
         valueListenable: showingCartFAB,
-        child: CartIcon(cartKey: CartIconAnchor.key3),
+        // The collapsed header still keeps its own CartIcon mounted, so
+        // this one must opt out of the shared hero tag.
+        child: CartIcon(cartKey: CartIconAnchor.key3, enableHero: false),
         builder: (context, showing, child) {
           if (!showing) return SizedBox.shrink();
           return child!;
@@ -172,6 +174,7 @@ class _MoreProductsScreenState extends State<MoreProductsScreen> {
                       builder: (context, showing, child) {
                         return ProductCard(
                           product: product,
+                          heroTag: 'product_$index',
                           cartIconKey: showing
                               ? CartIconAnchor.key3
                               : CartIconAnchor.key2,

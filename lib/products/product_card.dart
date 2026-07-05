@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grocery_delivery_app/app_colors.dart';
-import 'package:grocery_delivery_app/main.dart';
 import 'package:grocery_delivery_app/models/product_model.dart';
+import 'package:grocery_delivery_app/product_details/product_details_screen.dart';
 import 'package:grocery_delivery_app/products/products_provider.dart';
 import 'package:grocery_delivery_app/ui_extensions.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +21,16 @@ class ProductCard extends StatelessWidget {
   final ProductModel product;
   final GlobalKey cartIconKey;
 
-  const ProductCard({super.key, required this.product, required this.cartIconKey});
+  /// Unique per list position (the seed data repeats products, so the
+  /// name alone would produce duplicate hero tags on one screen).
+  final String heroTag;
+
+  const ProductCard({
+    super.key,
+    required this.product,
+    required this.cartIconKey,
+    required this.heroTag,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +55,13 @@ class ProductCard extends StatelessWidget {
     final int count = product.cartCount;
     final bool isSelected = count > 0;
 
-    return Container(
-      
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        ProductDetailsScreen.route(product: product, heroTag: heroTag),
+      ),
+      child: Container(
+
       width: context.deviceWidth * 0.31,
 
       decoration: BoxDecoration(
@@ -68,10 +82,13 @@ class ProductCard extends StatelessWidget {
             flex: 2,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Image.asset(product.image,
-              height: imgSize ,
-              width: imgSize,
-               fit: BoxFit.contain),
+              child: Hero(
+                tag: heroTag,
+                child: Image.asset(product.image,
+                height: imgSize ,
+                width: imgSize,
+                 fit: BoxFit.contain),
+              ),
             ),
           ),
 
@@ -163,6 +180,7 @@ class ProductCard extends StatelessWidget {
                   child: _buildInactiveAddButton()),
           ),
         ],
+      ),
       ),
     );
   }

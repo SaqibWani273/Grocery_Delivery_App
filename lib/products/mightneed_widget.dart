@@ -70,7 +70,11 @@ class YouMightNeedSection extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8.0),
-                    child: ProductCard(product: products[index], cartIconKey: CartIconAnchor.key,),
+                    child: ProductCard(
+                      product: products[index],
+                      heroTag: 'mightneed_$index',
+                      cartIconKey: CartIconAnchor.key,
+                    ),
                   );
                 },
               ),
