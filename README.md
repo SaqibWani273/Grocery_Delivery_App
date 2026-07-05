@@ -1,3 +1,12 @@
+
+
+
+
+
+
+
+
+
 # 🛒 Grocery Delivery App
 
 A pixel-perfect Flutter implementation of a beautiful [Dribbble](https://dribbble.com) grocery delivery concept — built to explore advanced UI, custom shapes, and smooth animations.
@@ -8,8 +17,7 @@ A pixel-perfect Flutter implementation of a beautiful [Dribbble](https://dribbbl
 
 ## 📽️ Demo
 
-<!-- TODO: add screen recording -->
-*Screen recording coming soon.*
+https://github.com/user-attachments/assets/2a959a4a-e862-4aad-aa6f-dba61953bf15
 
 ## ✨ Screens
 
