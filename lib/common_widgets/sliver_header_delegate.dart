@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:grocery_delivery_app/app_colors.dart';
 import 'package:grocery_delivery_app/dashboard/widgets/custom_shapes.dart';
 import 'package:grocery_delivery_app/ui_extensions.dart';
@@ -70,6 +71,11 @@ class CollapsingGroceryAppBarDelegate extends SliverPersistentHeaderDelegate {
                     y2: curveBottom - 60,
                   ),
                   child: Container(color: AppColors.primaryDark),
+                )
+                .animate().slideY(
+                  begin: -0.5,
+                  end: 0,
+                  curve: Curves.easeOut
                 ),
                  
         // 2. Fading Content 

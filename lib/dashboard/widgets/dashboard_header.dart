@@ -198,7 +198,15 @@ class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
   }
 
   Future<void> _runEntranceAnimation() async {
-    if (!mounted || !_horizontalScrollController.hasClients) return;
+    if (!mounted) return;
+    if (!_horizontalScrollController.hasClients) {
+      // ListView not attached yet: try again next frame instead of stranding
+      // an empty, scroll-locked row
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _runEntranceAnimation();
+      });
+      return;
+    }
 
     if (!_entranceActive) {
       // Coming back from another screen: nudge the controller so every
@@ -212,11 +220,20 @@ class _CurvedCategoryRowState extends State<CurvedCategoryRow> {
     _hasPlayedEntrance = true;
     final spacerWidth = context.deviceWidth;
 
+    // animateTo progresses by wall-clock time, so on real devices startup
+    // jank (shader compilation, image decode, launch screen still covering
+    // the app) would consume the sweep before anything is visible. Wait for
+    // a fully produced frame plus a settle beat before starting.
+    await WidgetsBinding.instance.endOfFrame;
+    await Future.delayed(const Duration(milliseconds: 100));
+    if (!mounted || !_horizontalScrollController.hasClients) return;
+
     // Scrolling across the spacer drags the items in from the right; each
     // CurvedScrollItem tracks the scroll, so they ride the curve on the way in
     await _horizontalScrollController.animateTo(
       spacerWidth,
       duration: const Duration(milliseconds: 1500),
+      // curve: Curves.fastOutSlowIn,
       curve: Curves.fastOutSlowIn,
     );
     if (!mounted) return;
